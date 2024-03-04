@@ -16,3 +16,18 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+public function displayGrid(Request $request)
+{
+    $products=\App\Models\Product::all();
+    return view('products.displaygrid')->with('products',$products);
+}
+
+
+Route::resource('products', App\Http\Controllers\productController::class);
+
+
+Route::resource('scorders', App\Http\Controllers\scorderController::class);
+
+
+Route::resource('orderdetails', App\Http\Controllers\orderdetailController::class);
