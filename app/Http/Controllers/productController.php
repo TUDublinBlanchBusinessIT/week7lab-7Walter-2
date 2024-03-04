@@ -34,6 +34,11 @@ class productController extends AppBaseController
         return view('products.index')
             ->with('products', $products);
     }
+    public function displayGrid(Request $request)
+    {
+    $products=\App\Models\Product::all();
+    return view('products.displaygrid')->with('products',$products);
+    }
 
     /**
      * Show the form for creating a new product.
