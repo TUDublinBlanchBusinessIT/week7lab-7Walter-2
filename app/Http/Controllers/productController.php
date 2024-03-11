@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use Session;
 
 use App\Http\Requests\CreateproductRequest;
 use App\Http\Requests\UpdateproductRequest;
@@ -9,7 +10,6 @@ use App\Http\Controllers\AppBaseController;
 use Illuminate\Http\Request;
 use Flash;
 use Response;
-use Session;
 
 class productController extends AppBaseController
 {
@@ -34,11 +34,6 @@ class productController extends AppBaseController
 
         return view('products.index')
             ->with('products', $products);
-    }
-    public function displayGrid(Request $request)
-    {
-    $products=\App\Models\Product::all();
-    return view('products.displaygrid')->with('products',$products);
     }
 
     /**
@@ -68,7 +63,6 @@ class productController extends AppBaseController
 
         return redirect(route('products.index'));
     }
-    
 
     /**
      * Display the specified product.
@@ -160,21 +154,50 @@ class productController extends AppBaseController
 
         return redirect(route('products.index'));
     }
-    public function additem($productid)
+
+        public function displayGrid(Request $request)
     {
-    if (Session::has('cart')) {
-        $cart = Session::get('cart');
-        if (isset($cart[$productid])) {
-            $cart[$productid]=$cart[$productid]+1; //add one to product in cart
+        $products=\App\Models\Product::all();
+        if ($request->session()->has('cart')) {
+            $cart = $request->session()->get('cart');
+            print_r($cart);
+            $totalQty=0;
+            foreach ($cart as $product => $qty) {
+                $totalQty = $totalQty + $qty;
+            }
+            $totalItems=$totalQty;
         }
         else {
-            $cart[$productid]=1; //new product in cart
+            $totalItems=0;
+            echo "no cart";
         }
+        return view('products.displaygrid')->with('products',$products)->with('totalItems',$totalItems);
     }
-    else {
-        $cart[$productid]=1; //new cart
+
+        public function additem($productid)
+    {
+        if (Session::has('cart')) {
+            $cart = Session::get('cart');
+            if (isset($cart[$productid])) {
+                $cart[$productid]=$cart[$productid]+1; //add one to product in cart
+            }
+            else {
+                $cart[$productid]=1; //new product in cart
+            }
+        }
+        else {
+            $cart[$productid]=1; //new cart
+        }
+        Session::put('cart', $cart);
+        return Response::json(['success'=>true,'total'=>array_sum($cart)],200);
     }
-    Session::put('cart', $cart);
-    return Response::json(['success'=>true,'total'=>array_sum($cart)],200);
-    }
+        public function emptycart()
+     {
+         if (Session::has('cart')) {
+             Session::forget('cart');
+         }
+         return Response::json(['success'=>true],200);
+     }
 }
+
+
