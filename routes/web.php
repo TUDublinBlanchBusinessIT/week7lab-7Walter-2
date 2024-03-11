@@ -17,16 +17,14 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-//Route::resource('products', App\Http\Controllers\productController::class);
-
-
-Route::resource('scorders', App\Http\Controllers\scorderController::class);
-
-
-Route::resource('orderdetails', App\Http\Controllers\orderdetailController::class);
-
 Route::get('products/displaygrid', 'App\Http\Controllers\productController@displaygrid')->name('products.displaygrid');
+//Route::resource('products', 'productController');
+Route::resource('products', App\Http\Controllers\productController::class);
 
 Route::get('products/additem/{id}', 'App\Http\Controllers\productController@additem')->name('products.additem');
-
+Route::resource('orderdetails', App\Http\Controllers\orderdetailController::class);
 Route::get('products/emptycart', 'App\Http\Controllers\productController@emptycart')->name('products.emptycart');
+Route::post('scorders/placeorder', 'App\Http\Controllers\scorderController@placeorder')->name('scorders.placeorder');
+Route::resource('scorders', App\Http\Controllers\scorderController::class);
+Route::get('scorders/checkout', 'App\Http\Controllers\scorderController@checkout')->name('scorders.checkout');
+
